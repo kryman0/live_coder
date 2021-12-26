@@ -17,7 +17,7 @@ app.set("view engine", "pug"); // template engine
 
 
 app.get("/", (req, res) => {
-    res.render("index", { title: "welcome!", message: "hey there" });
+    res.render("index", { title: "welcome!" });
 });
 
 app.post("/", async (req, res) => {
@@ -25,17 +25,10 @@ app.post("/", async (req, res) => {
 
     fs.writeFile("./temp/test.php", req.body, (err) => {
         if (err) {
-            res.send("Something went wrong");
+            throw err;
         }
     });
 
-//    const child = childProc.execFile("php", [ "-f", "./test.php" ], (err, stdout, stderr) => {
-//        if (err || stderr) console.log("error exec file", err, stderr);
-//       
-//        //res.send(stdout);
-//    });
-    
-    
     const child = await getOutput("./temp/test.php");
 
     //console.log(child.on("data", (data) => data));
