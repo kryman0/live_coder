@@ -12,11 +12,18 @@ app.use(express.text(
     { limit: "500kb" }
 ));
 
+app.set("views", "./views"); // views directory
+app.set("view engine", "pug"); // template engine
+
+
+app.get("/", (req, res) => {
+    res.render("index", { title: "welcome!", message: "hey there" });
+});
 
 app.post("/", async (req, res) => {
     //console.log(req.body);
 
-    fs.writeFile("./test.php", req.body, (err) => {
+    fs.writeFile("./temp/test.php", req.body, (err) => {
         if (err) {
             res.send("Something went wrong");
         }
@@ -29,12 +36,12 @@ app.post("/", async (req, res) => {
 //    });
     
     
-    const child = await getOutput("./test.php");
+    const child = await getOutput("./temp/test.php");
 
     //console.log(child.on("data", (data) => data));
-    console.log(child);
+    //console.log(child);
 
-    res.send("it works");
+    res.send(child);
 });
 
 
