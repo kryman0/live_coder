@@ -31,16 +31,16 @@ app.get("/", (req, res) => {
 app.post("/", async (req, res) => {
     console.log(req.body);
 
-//    fs.writeFile("./temp/test.php", req.body, (err) => {
-//        if (err) {
-//            throw err;
-//        }
-//    });
-//
-//    const child = await getOutput("./temp/test.php");
+    fs.writeFile("./temp/test.php", req.body, (err) => {
+        if (err) {
+            throw err;
+        }
+    });
+
+    const child = await getOutput("./temp/test.php");
 
 
-    //res.send(child);
+    res.send(child);
 });
 
 

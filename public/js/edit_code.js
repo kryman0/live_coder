@@ -1,5 +1,3 @@
-var codeResElem = document.getElementById("code-result");
-
 var textareaElem = document.getElementById("edit-code");
 
 document.addEventListener("keydown", (target) => {
@@ -10,16 +8,18 @@ document.addEventListener("keydown", (target) => {
 });
 
 function sendCode(text) {
-    //let texty = textareaElem.value;
+    let codeResElem = document.getElementById("code-result");
     //console.log("from function:", text);
 
     fetch("http://localhost:5000", {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
         body: text
-    }).then(resp => {
-        codeResElem.innerText = resp.text()
-    }).catch(err => console.log("Something went wrong", err));
+    }).then(
+        resp => resp.text()
+    ).then(data => {
+        codeResElem.innerText = data;
+    }).catch(err => console.log("Something went wrong:", err));
 }
 
 //async function getCode() {}

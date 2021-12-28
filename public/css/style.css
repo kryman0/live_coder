@@ -1,6 +1,13 @@
-#code-result {
+#code-result-container {
     width: 50%;
     height: 200px;
     margin: 0 auto;
     border: 1px solid black;
+}
+
+#edit-code {
+    width: 50%;
+    height: 200px;
+    margin: 20px auto 60px;
+    display: block; 
 }
