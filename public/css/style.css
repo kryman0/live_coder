@@ -1,7 +1,7 @@
 #code-result-container {
     width: 50%;
     height: 200px;
-    margin: 0 auto;
+    margin: 20px auto;
     border: 1px solid black;
 }
 
@@ -10,4 +10,8 @@
     height: 200px;
     margin: 20px auto 60px;
     display: block; 
+}
+
+.CodeMirror {
+    /*background-color: aqua;*/
 }

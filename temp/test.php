@@ -1,5 +1,1 @@
-<?php
-
-$arr = [ "heya", "there" ];
-
-print_r($arr);
+<?php print_r([1,33, "a" => "adam"]);

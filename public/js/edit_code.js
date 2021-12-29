@@ -1,11 +1,14 @@
 var textareaElem = document.getElementById("edit-code");
 
-document.addEventListener("keydown", (target) => {
-    if (target.ctrlKey && target.key == "Enter") {
-        sendCode(target.target.value);
-        //console.log(target.target.value);
+let cmOpts = {
+    extraKeys: {
+        'Ctrl-Enter': function(cm) {
+            sendCode(cm.getValue());
+        }
     }
-});
+};
+
+var codeMirror = CodeMirror.fromTextArea(textareaElem, cmOpts);
 
 function sendCode(text) {
     let codeResElem = document.getElementById("code-result");
@@ -21,5 +24,3 @@ function sendCode(text) {
         codeResElem.innerText = data;
     }).catch(err => console.log("Something went wrong:", err));
 }
-
-//async function getCode() {}
