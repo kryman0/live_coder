@@ -14,4 +14,12 @@
 
 .CodeMirror {
     /*background-color: aqua;*/
+    border-width: 1px;
+    border-style: dotted;
+}
+
+select {
+    float: right;
+    width: 150px;    
+    display: block;
 }

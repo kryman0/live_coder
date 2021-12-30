@@ -1,1 +1,1 @@
-<?php echo "hi there"
+<?php print_r(array_flip(["a" => "adam", "b" => "bengt"]));
