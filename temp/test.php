@@ -1,1 +1,1 @@
-<?php print_r([1,33, "a" => "adam"]);
+<?php echo "hi there"

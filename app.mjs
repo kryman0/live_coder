@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
 
     fs.writeFile("./temp/test.php", req.body, (err) => {
         if (err) {
@@ -37,22 +37,28 @@ app.post("/", async (req, res) => {
         }
     });
 
-    const child = await getOutput("./temp/test.php");
+    const stdMsg = await getOutput("./temp/test.php");
 
 
-    res.send(child);
+    res.send(stdMsg);
 });
 
 
 async function getOutput(file) {
     const execFile = util.promisify(childProc.execFile);
 
-    const { stdout } = await execFile("php", [ "-f", file ]);
+    let [ child, stderr ] = [ "", "" ];
 
-    //console.log(child);
+    try {
+        child = await execFile("php", [ "-f", file ]);
+    } catch(error) {
+        stderr = error.stderr;
+        //console.log(error);
+    }
+    
+    if (stderr) return stderr;
 
-
-    return stdout;
+    return child.stdout;
 }
 
 
