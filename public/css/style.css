@@ -5,12 +5,18 @@
     border: 1px solid black;
 }
 
+.error {
+    border: 5px solid red;
+}
+
+/*
 #edit-code {
     width: 50%;
     height: 200px;
     margin: 20px auto 60px;
     display: block; 
 }
+*/
 
 .CodeMirror {
     /*background-color: aqua;*/
@@ -18,9 +24,20 @@
     border-style: dotted;
 }
 
-ul {
+#lang-menu {
     float: right;
+    margin: 0 0 0 10px;
+    padding: 0;
     width: 150px;    
     display: block;
     list-style-type: none;
+    border: 1px solid black;
+}
+
+.remove-display {
+    display: none;
+}
+
+.enable-display {
+    display: block;
 }

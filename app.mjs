@@ -7,6 +7,11 @@ import util from "util";
 const app = express();
 const port = 5000;
 
+app.use(
+    express.json(
+        { limit: "500kb" }
+    )
+);
 
 app.use(
     express.static(
@@ -14,11 +19,11 @@ app.use(
     )
 );
 
-app.use(
-    express.text(
-        { limit: "500kb" }
-    )
-);
+//app.use(
+//    express.text(
+//        { limit: "500kb" }
+//    )
+//);
 
 app.set("views", "./views"); // views directory
 app.set("view engine", "pug"); // template engine
@@ -30,18 +35,52 @@ app.get("/", (req, res) => {
 
 app.post("/", async (req, res) => {
     //console.log(req.body);
+    let stdMsg = "";
+    
+    // Check file was written and language exists."
+    if (await getWrittenFile(req.body) && getRightFile(req.body.mode)) {
+        let file = createFileName(req.body.mode);
+        
+        stdMsg = await getOutput(`./temp/${file}`);
+        //console.log(file, stdMsg);
+    } else {
+        stdMsg = "Error, please try again!";
+    }
 
-    fs.writeFile("./temp/test.php", req.body, (err) => {
-        if (err) {
-            throw err;
-        }
-    });
-
-    const stdMsg = await getOutput("./temp/test.php");
-
-
+    
     res.send(stdMsg);
 });
+
+
+function getRightFile(fileExt) {
+    const availableLanguages = [ "php" ];
+
+
+    return availableLanguages.find((el) => el == fileExt);
+}
+
+
+async function getWrittenFile(body) {
+    const filesFolder = "./temp/";
+    
+    var isFileSaved = false;
+
+    let file = createFileName(body.mode);
+    //console.log(filesFolder + file);
+    
+    try {
+        isFileSaved = await fs.promises.writeFile(filesFolder + file, body.code);
+        //console.log("try:", isFileSaved);
+    } catch (error) {
+        //console.log("catch", error);
+        isFileSaved = false;
+    }
+
+    
+    //console.log("function", isFileSaved);
+
+    return isFileSaved === undefined ? true : false;
+}
 
 
 async function getOutput(file) {
@@ -50,7 +89,7 @@ async function getOutput(file) {
     let [ child, stderr ] = [ "", "" ];
 
     try {
-        child = await execFile("php", [ "-f", file ]);
+        child = await execFile("php", [ "-f", file ]); // ändra efter filändelse för rätt program
     } catch(error) {
         stderr = error.stderr;
         //console.log(error);
@@ -59,6 +98,11 @@ async function getOutput(file) {
     if (stderr) return stderr;
 
     return child.stdout;
+}
+
+
+function createFileName(file) {
+    return "code." + file;
 }
 
 
