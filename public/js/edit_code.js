@@ -27,3 +27,7 @@ function sendCode(text) {
         codeResElem.innerText = data;
     }).catch(err => console.log("Something went wrong:", err));
 }
+
+function setcmMode(mode) {
+    console.log(mode);
+}

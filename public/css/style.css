@@ -18,8 +18,9 @@
     border-style: dotted;
 }
 
-select {
+ul {
     float: right;
     width: 150px;    
     display: block;
+    list-style-type: none;
 }
