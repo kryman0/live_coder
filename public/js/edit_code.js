@@ -20,7 +20,8 @@ function sendCode(text) {
 
     let bodyObj = {
         code: text,
-        mode: codeMirror.getOption("mode")
+        //mode: codeMirror.getOption("mode")
+        mode: "php"
     };
 
     //console.log(bodyObj);
