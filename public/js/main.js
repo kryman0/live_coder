@@ -1,19 +1,22 @@
-alert("from main")
+define(function (require) {
+    //var CodeMirror = require("codemirror");
 
-//requirejs(["edit_code"], function(edit_code));
+    //var cm = require("./codemirror");
 
-requirejs.config({
-    baseUrl: "./js",
-    //paths: "/js",
-    packages: [
-        {
-            name: "codemirror",
-            location: "../codemirror",
-            main: "lib/codemirror",
-        }
-    ],
+    
+
+    var editCode = require("./edit_code");
+    //editCode.setcmMode(event);
 });
 //
-//requirejs(["codemirror"], function(codemirror));
-//
-////console.log(requirejs);
+//const app = {    
+//    greet: function() {
+//        alert("hi");
+//    }
+//};
+
+//define({
+//    color: "red",
+//});
+
+//export app;

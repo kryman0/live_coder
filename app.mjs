@@ -1,7 +1,29 @@
 import express from "express";
+import path from "path";
 import fs from "fs";
 import childProc from "child_process";
 import util from "util";
+import requirejs from "requirejs";
+import { createRequire } from "module";
+
+//const require = createRequire(import.meta.url);
+
+//requirejs.config({
+//    baseUrl: path.dirname(import.meta.url),
+//    //nodeRequire: require,
+//    paths: {
+//        main: "public/js/main",
+//    },
+//    //packages: [
+//    //    {
+//    //        name: "codemirror",
+//    //        location: "node_modules/codemirror",
+//    //        main: "lib/codemirror",
+//    //    }
+//    //],
+//});
+
+//requirejs("main");
 
 
 const app = express();
