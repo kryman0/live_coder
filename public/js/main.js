@@ -1,22 +1,8 @@
 define(function (require) {
-    //var CodeMirror = require("codemirror");
-
-    //var cm = require("./codemirror");
-
+    let codeEditor = require("./codemirror");
+    //codeEditor.setMode("javascript", this);
     
+    //console.log(cm);
 
-    var editCode = require("./edit_code");
-    //editCode.setcmMode(event);
+    return { codeEditor };
 });
-//
-//const app = {    
-//    greet: function() {
-//        alert("hi");
-//    }
-//};
-
-//define({
-//    color: "red",
-//});
-
-//export app;

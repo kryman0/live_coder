@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: "lib",
     paths: {
-        app: "../js",
+        app: "/js",
     },
     packages: [
         {
@@ -9,7 +9,7 @@ requirejs.config({
             location: "codemirror",
             main: "lib/codemirror",
         }
-    ],
+    ]
 });
 
 requirejs(["app/main"]);

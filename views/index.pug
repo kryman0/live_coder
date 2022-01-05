@@ -8,8 +8,11 @@ html
         include includes/code_result.pug
 
         include includes/footer.pug
-    
-    //script(src="./js/edit_code.js")
 
     script.
-       //requirejs(["edit_code"], function(edit_code))
+        //console.log(editCode);
+        let style = document.createElement("link");
+        style.rel = "stylesheet";
+        style.type = "text/css";
+        style.href = "./css/codemirror.css";
+        //document.head.appendChild(style);
