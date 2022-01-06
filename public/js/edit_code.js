@@ -98,8 +98,8 @@ define(["codemirror"], function (CodeMirror) {
 
     function setcmMode(eventElem) {
         //alert("hi");
-        let langMenuElem = document.getElementById("lang-menu");
-        langMenuElem.addEventListener("click", (event) => {
+        let langmenuelem = document.getelementbyid("lang-menu");
+        langmenuelem.addeventlistener("click", (event) => {
             console.log(event);
         });
 
