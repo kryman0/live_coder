@@ -6,7 +6,7 @@ define(function (require) {
     var langMenuElem = document.getElementById("lang-menu");
 
     langMenuElem.addEventListener("click", (event) => {
-        setMode(event.target);
+        setMode(event);
     });
 
     let defaultOptions = {
@@ -63,26 +63,29 @@ define(function (require) {
         }).catch(err => console.log("Something went wrong:", err));
     }
 
-
-    function setMode(element, cmInstance, severalInstances) {
-        mode = element.innerText;
-
+    document.body.addEventListener("click", (event) => {
         let className = "";
 
-        if (element.tagName !== "LI") {
-            className = "enable-display";
-        } else {
-            className = "remove-display";
+        if (event.target.id === "lang-menu")
+            enableOrRemoveDisplay("enable-display");
+        else
+            enableOrRemoveDisplay("remove-display");           
+    });
 
-            codeMirror.setOption("mode", element.innerText); //check this works
-        }
-
+    
+    function enableOrRemoveDisplay(className) {     
         for (let i = 0; i < langMenuElem.children.length; i++) {
             langMenuElem.children[i].className = className;
         }
+    }
 
-        console.log(eventElem);
-        //console.log("called");
+    function setMode(element, cmInstance, severalInstances) {
+        mode = element.target.value;
+
+        //console.log(element);
+
+        if (element.target.tagName !== "OPTION") return;
+
         pathToMode = "codemirror/mode/" + mode + "/" + mode;
 
         if (severalInstances) {
@@ -113,11 +116,9 @@ define(function (require) {
             require([
                 cm, pathToMode
             ], function() {
-                //console.log(cmInstance, "cm:", cm);
-                //cm.codeMirror.setOption("mode", mode);
+                //console.log(CodeMirror);
+                cm.setOption("mode", mode);
             });
-
-            //return cmInstance;
         }
     }
 
