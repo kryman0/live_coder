@@ -27,11 +27,15 @@
 #lang-menu {
     float: right;
     margin: 0 0 0 10px;
-    padding: 0;
+    padding: 3px 5px;
     width: 150px;    
     display: block;
     list-style-type: none;
     border: 1px solid black;
+}
+
+#lang-menu option {
+    margin: 10px 0 0;
 }
 
 .remove-display {
