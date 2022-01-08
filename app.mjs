@@ -3,27 +3,6 @@ import path from "path";
 import fs from "fs";
 import childProc from "child_process";
 import util from "util";
-import requirejs from "requirejs";
-import { createRequire } from "module";
-
-//const require = createRequire(import.meta.url);
-
-//requirejs.config({
-//    baseUrl: path.dirname(import.meta.url),
-//    //nodeRequire: require,
-//    paths: {
-//        main: "public/js/main",
-//    },
-//    //packages: [
-//    //    {
-//    //        name: "codemirror",
-//    //        location: "node_modules/codemirror",
-//    //        main: "lib/codemirror",
-//    //    }
-//    //],
-//});
-
-//requirejs("main");
 
 
 const app = express();
@@ -35,21 +14,14 @@ app.use(
     )
 );
 
-//app.use(express.static("views"));
 app.use(express.static("public"));
-
-//app.use(
-//    express.text(
-//        { limit: "500kb" }
-//    )
-//);
 
 app.set("views", "./views"); // views directory
 app.set("view engine", "pug"); // template engine
 
 
 app.get("/", (req, res) => {
-    res.render("index", { title: "welcome!" });
+    res.render("index", { title: "Live Coder" });
 });
 
 app.post("/", async (req, res) => {
@@ -57,7 +29,7 @@ app.post("/", async (req, res) => {
     let stdMsg = "";
     
     // Check file was written and language exists."
-    if (await getWrittenFile(req.body) && getRightFile(req.body.mode)) {
+    if (await getWrittenFile(req.body) && languageExists(req.body.mode)) {
         let file = createFileName(req.body.mode);
         
         stdMsg = await getOutput(`./temp/${file}`);
@@ -71,7 +43,7 @@ app.post("/", async (req, res) => {
 });
 
 
-function getRightFile(fileExt) {
+function languageExists(fileExt) {
     const availableLanguages = [ "php" ];
 
 
@@ -95,8 +67,6 @@ async function getWrittenFile(body) {
         isFileSaved = false;
     }
 
-    
-    //console.log("function", isFileSaved);
 
     return isFileSaved === undefined ? true : false;
 }
@@ -107,8 +77,11 @@ async function getOutput(file) {
 
     let [ child, stderr ] = [ "", "" ];
 
+    let binary = createCommandsForBinary(file)[0];
+    let binaryCmds = createCommandsForBinary(file)[1];
+
     try {
-        child = await execFile("php", [ "-f", file ]); // ändra efter filändelse för rätt program
+        child = await execFile(binary, [ binaryCmds.join(","), file ]);
     } catch(error) {
         stderr = error.stderr;
         //console.log(error);
@@ -122,6 +95,19 @@ async function getOutput(file) {
 
 function createFileName(file) {
     return "code." + file;
+}
+
+
+function createCommandsForBinary(file) {
+    let commands = [];
+
+    if (file.endsWith(".php")) {
+        commands.push("php", []);
+        commands[1].push("-f");
+    }
+
+
+    return commands;
 }
 
 
