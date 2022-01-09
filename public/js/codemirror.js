@@ -18,6 +18,7 @@ define(function (require) {
         indentUnit: 4,
         lineWrapping: true,
         lineNumbers: true,
+        mode: typeof mode === "undefined" ? null : mode,
     };
 
     var cm = CodeMirror.fromTextArea(
@@ -57,15 +58,16 @@ define(function (require) {
             if (data.startsWith("Error"))
                 codeResElem.className = "error";
             else
-                codeResElem.style.border = "none";
+                codeResElem.className = "";
 
             codeResElem.innerText = data;
-        }).catch(err => console.log("Something went wrong:", err));
+        }).catch(err => {
+            codeResElem.className = "error";
+            codeResElem.innerText = `Something went wrong:\n${err}`;
+        });
     }
 
     document.body.addEventListener("click", (event) => {
-        let className = "";
-
         if (event.target.id === "lang-menu")
             enableOrRemoveDisplay("enable-display");
         else
@@ -79,6 +81,16 @@ define(function (require) {
         }
     }
 
+    //function convertToRightMode(element) {
+    //    mode = element.target.value;
+
+    //    if (mode == "py")
+    //        mode = "python";
+
+    //   
+    //    return mode;
+    //}
+
     function setMode(element, cmInstance, severalInstances) {
         mode = element.target.value;
 
@@ -88,19 +100,19 @@ define(function (require) {
 
         pathToMode = "codemirror/mode/" + mode + "/" + mode;
 
-        if (severalInstances) {
-            let options = {
-                extraKeys: {
-                    'Ctrl-Enter': function(cm) {
-                        sendCode(cm.getValue());
-                    }
-                },
-                indentUnit: 4,
-                lineWrapping: true,
-                lineNumbers: true,
-                mode: mode
-            };
-            //console.log(mode);
+        if (severalInstances) { // this is not done
+            //let options = {
+            //    extraKeys: {
+            //        'Ctrl-Enter': function(cm) {
+            //            sendCode(cm.getValue());
+            //        }
+            //    },
+            //    indentUnit: 4,
+            //    lineWrapping: true,
+            //    lineNumbers: true,
+            //    mode: mode
+            //};
+            ////console.log(mode);
             
             
             require([
@@ -108,13 +120,13 @@ define(function (require) {
             ], function(CodeMirror) {
                 CodeMirror.fromTextArea(
                     textareaElem,
-                    options
+                    defaultOptions
                 )
             });        
         } else {
-            console.log(cm);
+            //console.log(cm);
             require([
-                cm, pathToMode
+                pathToMode
             ], function() {
                 //console.log(CodeMirror);
                 cm.setOption("mode", mode);
@@ -122,7 +134,7 @@ define(function (require) {
         }
     }
 
-
+    
     return {
         setMode,
         codeMirror: cm

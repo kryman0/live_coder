@@ -18,8 +18,7 @@
   },
   "homepage": "https://github.com/kryman0/live_coder#readme",
   "devDependencies": {
-    "nodemon": "^2.0.15",
-    "requirejs": "^2.3.6"
+    "nodemon": "^2.0.15"
   },
   "dependencies": {
     "codemirror": "^5.65.0",
