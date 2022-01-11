@@ -67,19 +67,19 @@ define(function (require) {
         });
     }
 
-    document.body.addEventListener("click", (event) => {
-        if (event.target.id === "lang-menu")
-            enableOrRemoveDisplay("enable-display");
-        else
-            enableOrRemoveDisplay("remove-display");           
-    });
+    //document.body.addEventListener("click", (event) => {
+    //    if (event.target.id === "lang-menu")
+    //        enableOrRemoveDisplay("enable-display");
+    //    else
+    //        enableOrRemoveDisplay("remove-display");           
+    //});
 
     
-    function enableOrRemoveDisplay(className) {     
-        for (let i = 0; i < langMenuElem.children.length; i++) {
-            langMenuElem.children[i].className = className;
-        }
-    }
+    //function enableOrRemoveDisplay(className) {     
+    //    for (let i = 0; i < langMenuElem.children.length; i++) {
+    //        langMenuElem.children[i].className = className;
+    //    }
+    //}
 
     //function convertToRightMode(element) {
     //    mode = element.target.value;
@@ -92,11 +92,11 @@ define(function (require) {
     //}
 
     function setMode(element, cmInstance, severalInstances) {
-        mode = element.target.value;
+        mode = element.target.value; // TODO: change to element select instead of datalist
 
-        //console.log(element);
+        console.log(element);
 
-        if (element.target.tagName !== "OPTION") return;
+        if (element.target.value === "language") return;
 
         pathToMode = "codemirror/mode/" + mode + "/" + mode;
 
