@@ -34,7 +34,7 @@ define(function (require) {
 
         let bodyObj = {
             code: text,
-            mode: cm.getOption("mode")
+            mode: convertToRightFileExt(cm.getOption("mode"))
         };
 
         if (bodyObj.code == "" || bodyObj.mode === null) {
@@ -45,6 +45,8 @@ define(function (require) {
 
             return;
         }
+
+        //console.log(bodyObj);
 
         fetch("http://localhost:5000", {
             method: "POST",
@@ -59,6 +61,8 @@ define(function (require) {
                 codeResElem.className = "error";
             else
                 codeResElem.className = "";
+
+            //console.log(data);
 
             codeResElem.innerText = data;
         }).catch(err => {
@@ -81,20 +85,44 @@ define(function (require) {
     //    }
     //}
 
-    //function convertToRightMode(element) {
-    //    mode = element.target.value;
+    function convertToRightModeToCM(value) {
+        let mode = value;
 
-    //    if (mode == "py")
-    //        mode = "python";
+        switch (mode) {
+            case "js":
+                mode = "javascript";
+                break;
+            case "py":
+                mode = "python";
+                break;
+        }
+        
 
-    //   
-    //    return mode;
-    //}
+        return mode;
+    }
+
+    function convertToRightFileExt(mode) {
+        //console.log(mode);
+
+        switch (mode) {
+            case "javascript":
+                mode = "js";
+                break;
+            case "python":
+                mode = "py";
+                break;
+        }
+        
+        //console.log(mode);
+
+
+        return mode;
+    }
 
     function setMode(element, cmInstance, severalInstances) {
-        mode = element.target.value; // TODO: change to element select instead of datalist
+        let mode = convertToRightModeToCM(element.target.value);
 
-        console.log(element);
+        //console.log(mode);
 
         if (element.target.value === "language") return;
 

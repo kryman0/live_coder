@@ -32,13 +32,17 @@ app.post("/", async (req, res) => {
     if (await getWrittenFile(req.body) && languageExists(req.body.mode)) {
         let file = createFileName(req.body.mode);
         
+        //console.log("from post:", file);
+
         stdMsg = await getOutput(`./temp/${file}`);
-        //console.log(file, stdMsg);
+
+        //console.log("from post:", file, stdMsg);
     } else {
         stdMsg = "Error, please try again!";
     }
 
-    
+    //console.log(stdMsg);
+
     res.send(stdMsg);
 });
 
@@ -52,7 +56,7 @@ app.post("/", async (req, res) => {
 */
 function languageExists(fileExt) {
     //console.log(fileExt);
-    const availableLanguages = [ "php", "python" ];
+    const availableLanguages = [ "js", "php", "py" ];
 
 
     return availableLanguages.find((el) => el == fileExt);
@@ -76,13 +80,16 @@ async function getWrittenFile(body) {
     //console.log(filesFolder + file);
     
     try {
-        isFileSaved = await fs.promises.writeFile(filesFolder + file, body.code);
-        //console.log("try:", isFileSaved);
+        isFileSaved = await fs.promises.writeFile(
+            filesFolder + file, 
+            body.code
+        );
     } catch (error) {
-        //console.log("catch", error);
+        console.log("Could not write file to disk:", error);
         isFileSaved = false;
     }
 
+    //console.log(isFileSaved);
 
     return typeof isFileSaved === "undefined" ? true : false;
 }
@@ -98,23 +105,29 @@ async function getWrittenFile(body) {
 async function getOutput(file) {
     const execFile = util.promisify(childProc.execFile);
 
-    let [ child, stderr ] = [ "", "" ];
+    var [ child, stderr ] = [ "", "" ];
 
     let binary = createCommandsForBinary(file)[0];
     let binaryCmds = createCommandsForBinary(file)[1];
     
-    //console.log(binary, binaryCmds);
+    //console.log("outside try", process.argv);
 
-    try {
-        child = await execFile(binary, 
+    try {        
+        child = await execFile(
+            binary,
             binaryCmds.length > 0 ? [ binaryCmds.join(","), file ] : [ file ]
         );
+
+        //console.log("inside try", process.argv);
     } catch(error) {
         stderr = error.stderr;
-        //console.log(error);
+        console.log("Can't execute binary:", error);
     }
     
     if (stderr) return stderr;
+
+    //console.log(child);
+
 
     return child.stdout;
 }
@@ -128,15 +141,20 @@ async function getOutput(file) {
 * @returns {string} - Correct name of file to be executed where the file
 * has been saved.
 */
-function createFileName(file) {
-    //console.log("file:", file);
+function createFileName(fileExt) {
+    //console.log("file:", fileExt);
 
     let fileName = "code.";
 
-    if (file.startsWith("python")) {
-        fileName += "py";
-    } else {
-        fileName += file;
+    switch (fileExt) {
+        // Need to change to javascript (or something else node can parse) 
+        // as file extension, else the file extension ".js" will restart the current
+        // node process each time it is written to disk.
+        case "js":
+            fileName += "javascript";
+            break;
+        default:
+            fileName += fileExt;
     }
 
     //console.log("filename", fileName);
@@ -154,12 +172,22 @@ function createFileName(file) {
 */
 function createCommandsForBinary(file) {
     let commands = [];
+    
+    let fileExt = file.substring(file.lastIndexOf("."));
 
-    if (file.endsWith(".php")) {
-        commands.push("php", []);
-        commands[1].push("-f");
-    } else if (file.endsWith(".py")) {
-        commands.push("python3.7", []);
+    //console.log(file, fileExt);
+
+    switch (fileExt) {
+        case ".php":
+            commands.push("php", []);
+            commands[1].push("-f");
+            break;
+        case ".py":
+            commands.push("python3.7", []);
+            break;
+        case ".javascript":
+            commands.push("node", []);
+            break;
     }
 
 
