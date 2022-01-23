@@ -95,6 +95,9 @@ define(function (require) {
             case "py":
                 mode = "python";
                 break;
+            case "cs":
+                mode = "clike";
+                break;
         }
         
 
@@ -110,6 +113,9 @@ define(function (require) {
                 break;
             case "python":
                 mode = "py";
+                break;
+            case "clike":
+                mode = "cs";
                 break;
         }
         

@@ -56,7 +56,7 @@ app.post("/", async (req, res) => {
 */
 function languageExists(fileExt) {
     //console.log(fileExt);
-    const availableLanguages = [ "js", "php", "py" ];
+    const availableLanguages = [ "cs", "js", "php", "py" ];
 
 
     return availableLanguages.find((el) => el == fileExt);
@@ -78,7 +78,7 @@ async function getWrittenFile(body) {
 
     let file = createFileName(body.mode);
     //console.log(filesFolder + file);
-    
+
     try {
         isFileSaved = await fs.promises.writeFile(
             filesFolder + file, 
@@ -97,20 +97,22 @@ async function getWrittenFile(body) {
 
 /*
 * @function
-* Get's output from executed binary.
+* Gets output from executed binary.
 * 
 * @param   {string} file - Name of file.
 * @returns {string} - Child process' stdout message.
 */
 async function getOutput(file) {
+    //console.log(file);
+
     const execFile = util.promisify(childProc.execFile);
 
     var [ child, stderr ] = [ "", "" ];
 
     let binary = createCommandsForBinary(file)[0];
-    let binaryCmds = createCommandsForBinary(file)[1];
+    let binaryCmds = await createCommandsForBinary(file)[1];
     
-    //console.log("outside try", process.argv);
+    console.log("getOutput binaries", binary, binaryCmds);
 
     try {        
         child = await execFile(
@@ -125,8 +127,6 @@ async function getOutput(file) {
     }
     
     if (stderr) return stderr;
-
-    //console.log(child);
 
 
     return child.stdout;
@@ -153,6 +153,14 @@ function createFileName(fileExt) {
         case "js":
             fileName += "javascript";
             break;
+        case "cs":
+            fileName = "c_sharp/Program.cs";
+            
+            // Intention is to create first the folder "c_sharp",
+            // else the writeFile throws an error, not being able to create a file
+            // in a non-existing folder.
+            createCommandsForBinary(fileName); 
+            break;
         default:
             fileName += fileExt;
     }
@@ -170,8 +178,8 @@ function createFileName(fileExt) {
 * @param   {string} file - Correct file extension of the programming language.
 * @returns {Array} - The binary with its eventual arguments.
 */
-function createCommandsForBinary(file) {
-    let commands = [];
+async function createCommandsForBinary(file) {
+    var commands = [];
     
     let fileExt = file.substring(file.lastIndexOf("."));
 
@@ -188,7 +196,38 @@ function createCommandsForBinary(file) {
         case ".javascript":
             commands.push("node", []);
             break;
+        case ".cs":
+            let path = "./temp/c_sharp";
+
+            var directory = null;
+
+            try {
+                directory = await fs.promises.readdir(path, { withFileTypes: true });
+            } catch (error) {                
+                //console.log(`Could not read directory ${path}: ${error}`);
+            }
+
+            if (directory === null) {
+                try {
+                    const execFile = util.promisify(childProc.execFile);
+
+                    await execFile(
+                        "dotnet", [ "new", "console", "-o", path ]
+                    );
+                } catch(error) {
+                    console.log("Can't create new .NET console project:", error);
+                }
+            }
+
+            var commands = []; commands.push("dotnet", []);
+            commands[1].push("run", "--project", path);
+
+            break;
     }
+
+    var commands = [ "hello" ];
+
+    console.log(commands);
 
 
     return commands;
