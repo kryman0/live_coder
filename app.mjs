@@ -105,24 +105,32 @@ async function getWrittenFile(body) {
 async function getOutput(file) {
     //console.log(file);
 
-    const execFile = util.promisify(childProc.execFile);
+    //const execFile = util.promisify(childProc.execFile);
+    const exec = util.promisify(childProc.exec);
 
     var [ child, stderr ] = [ "", "" ];
 
-    let binary = createCommandsForBinary(file)[0];
-    let binaryCmds = await createCommandsForBinary(file)[1];
+    let binary = createCommandsForBinary(file);
+    //let binaryOpts = createCommandsForBinary(file)[1];
     
-    console.log("getOutput binaries", binary, binaryCmds);
+    console.log("binary:", binary);
 
     try {        
-        child = await execFile(
-            binary,
-            binaryCmds.length > 0 ? [ binaryCmds.join(","), file ] : [ file ]
+        child = await exec(
+            binary[0],
+            binary[1]
         );
 
-        //console.log("inside try", process.argv);
+        //child.stdout.setEncoding("utf8");
+
+        //child.stdout.on("data", (data) => {
+        //    console.log("child:", data);
+        //});
+
+        //console.log("inside try", child);
     } catch(error) {
         stderr = error.stderr;
+        
         console.log("Can't execute binary:", error);
     }
     
@@ -159,7 +167,10 @@ function createFileName(fileExt) {
             // Intention is to create first the folder "c_sharp",
             // else the writeFile throws an error, not being able to create a file
             // in a non-existing folder.
-            createCommandsForBinary(fileName); 
+            //createCommandsForBinary(fileName); 
+
+            // Create the dotnet project folder.
+            //getOutput(fileName);
             break;
         default:
             fileName += fileExt;
@@ -178,7 +189,7 @@ function createFileName(fileExt) {
 * @param   {string} file - Correct file extension of the programming language.
 * @returns {Array} - The binary with its eventual arguments.
 */
-async function createCommandsForBinary(file) {
+function createCommandsForBinary(file) {
     var commands = [];
     
     let fileExt = file.substring(file.lastIndexOf("."));
@@ -188,46 +199,81 @@ async function createCommandsForBinary(file) {
     switch (fileExt) {
         case ".php":
             commands.push("php", []);
-            commands[1].push("-f");
+            commands[1].push("-f", file);
             break;
         case ".py":
             commands.push("python3.7", []);
+            commands[1].push(file);
             break;
-        case ".javascript":
+        case ".javascript": // change back to js due to nodemon ignore rule
             commands.push("node", []);
+            commands[1].push(file);
             break;
         case ".cs":
             let path = "./temp/c_sharp";
 
-            var directory = null;
+            //var directory = null;
+            
+            //try {
+            //    directory = fs.readdirSync(path, { withFileTypes: true });
+            //} catch (error) {
+            //    console.log(`Could not read directory ${path}: ${error}. Creating one...`);
+            //}
 
-            try {
-                directory = await fs.promises.readdir(path, { withFileTypes: true });
-            } catch (error) {                
-                //console.log(`Could not read directory ${path}: ${error}`);
-            }
+            //if (directory === null) {
+            //    const isDirCreated = fs.mkdirSync(path);
 
-            if (directory === null) {
-                try {
-                    const execFile = util.promisify(childProc.execFile);
+            //    if (typeof isDirCreated === "undefined") {
+            //        console.log("Directory has been created.");
 
-                    await execFile(
-                        "dotnet", [ "new", "console", "-o", path ]
-                    );
-                } catch(error) {
-                    console.log("Can't create new .NET console project:", error);
-                }
-            }
+            //        commands.push(
+            //            'dotnet new console --force -o ' + path,
+            //            { timeout: 5000 }
+            //        );
+            //        //commands[1].push({ timeout: 5000 });
+            //    }
 
-            var commands = []; commands.push("dotnet", []);
-            commands[1].push("run", "--project", path);
+            //    //const execFile = util.promisify(childProc.execFile);
+            //    ////const stdOut = childProc.execFileSync();
+
+            //    //function callExecFile() {
+            //    //    const exec = util.promisify(childProc.exec);
+
+            //    //    let dotnetCommands = 'dotnet new console --force -o ' + path;
+            //    //    let dotnetOpts = { encoding: "utf8", timeout: 0 };
+
+            //    //    try {
+            //    //        const res = childProc.execSync(
+            //    //            dotnetCommands,
+            //    //            dotnetOpts
+            //    //            //__dirname + "/test.js"
+            //    //            //'dotnet', [ 'new', 'console', '--force', '-o', path ],
+            //    //            //{ stdio: "pipe", encoding: "utf8", timeout: 5000, shell: true }
+            //    //        );
+            //    //        //res.send("from parent here");
+            //    //        console.log("res:", res);
+            //    //    } catch (error) {
+            //    //        console.log("Can't create new .NET console project:", error);
+            //    //    }
+            //    //}
+
+            //    //callExecFile();
+            //} else {
+            //    commands.push(
+            //        'dotnet run --project ' + path,
+            //        {}
+            //    );
+            //}
+            
+            commands.push(
+                'dotnet run --project ' + path,
+                {}
+            );
 
             break;
     }
 
-    var commands = [ "hello" ];
-
-    console.log(commands);
+    //console.log(commands);
 
 
     return commands;
