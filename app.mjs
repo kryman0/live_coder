@@ -25,14 +25,14 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-    //console.log(req.body);
+    console.log(req.body);
     let stdMsg = "";
     
     // Check file was written and language exists."
     if (await getWrittenFile(req.body) && languageExists(req.body.mode)) {
         let file = createFileName(req.body.mode);
         
-        //console.log("from post:", file);
+        //console.log("from post:", file, req.body);
 
         stdMsg = await getOutput(`./temp/${file}`);
 
@@ -105,7 +105,6 @@ async function getWrittenFile(body) {
 async function getOutput(file) {
     //console.log(file);
 
-    //const execFile = util.promisify(childProc.execFile);
     const exec = util.promisify(childProc.exec);
 
     var [ child, stderr ] = [ "", "" ];
@@ -120,12 +119,6 @@ async function getOutput(file) {
             binary[0],
             binary[1]
         );
-
-        //child.stdout.setEncoding("utf8");
-
-        //child.stdout.on("data", (data) => {
-        //    console.log("child:", data);
-        //});
 
         //console.log("inside try", child);
     } catch(error) {
@@ -155,22 +148,8 @@ function createFileName(fileExt) {
     let fileName = "code.";
 
     switch (fileExt) {
-        // Need to change to javascript (or something else node can parse) 
-        // as file extension, else the file extension ".js" will restart the current
-        // node process each time it is written to disk.
-        case "js":
-            fileName += "javascript";
-            break;
         case "cs":
             fileName = "c_sharp/Program.cs";
-            
-            // Intention is to create first the folder "c_sharp",
-            // else the writeFile throws an error, not being able to create a file
-            // in a non-existing folder.
-            //createCommandsForBinary(fileName); 
-
-            // Create the dotnet project folder.
-            //getOutput(fileName);
             break;
         default:
             fileName += fileExt;
@@ -198,78 +177,21 @@ function createCommandsForBinary(file) {
 
     switch (fileExt) {
         case ".php":
-            commands.push("php", []);
-            commands[1].push("-f", file);
+            commands.push("php -f " + file);
             break;
         case ".py":
-            commands.push("python3.7", []);
-            commands[1].push(file);
+            commands.push("python3.7 " + file);
             break;
-        case ".javascript": // change back to js due to nodemon ignore rule
-            commands.push("node", []);
-            commands[1].push(file);
+        case ".js":
+            commands.push("node " + file);
             break;
         case ".cs":
             let path = "./temp/c_sharp";
 
-            //var directory = null;
-            
-            //try {
-            //    directory = fs.readdirSync(path, { withFileTypes: true });
-            //} catch (error) {
-            //    console.log(`Could not read directory ${path}: ${error}. Creating one...`);
-            //}
-
-            //if (directory === null) {
-            //    const isDirCreated = fs.mkdirSync(path);
-
-            //    if (typeof isDirCreated === "undefined") {
-            //        console.log("Directory has been created.");
-
-            //        commands.push(
-            //            'dotnet new console --force -o ' + path,
-            //            { timeout: 5000 }
-            //        );
-            //        //commands[1].push({ timeout: 5000 });
-            //    }
-
-            //    //const execFile = util.promisify(childProc.execFile);
-            //    ////const stdOut = childProc.execFileSync();
-
-            //    //function callExecFile() {
-            //    //    const exec = util.promisify(childProc.exec);
-
-            //    //    let dotnetCommands = 'dotnet new console --force -o ' + path;
-            //    //    let dotnetOpts = { encoding: "utf8", timeout: 0 };
-
-            //    //    try {
-            //    //        const res = childProc.execSync(
-            //    //            dotnetCommands,
-            //    //            dotnetOpts
-            //    //            //__dirname + "/test.js"
-            //    //            //'dotnet', [ 'new', 'console', '--force', '-o', path ],
-            //    //            //{ stdio: "pipe", encoding: "utf8", timeout: 5000, shell: true }
-            //    //        );
-            //    //        //res.send("from parent here");
-            //    //        console.log("res:", res);
-            //    //    } catch (error) {
-            //    //        console.log("Can't create new .NET console project:", error);
-            //    //    }
-            //    //}
-
-            //    //callExecFile();
-            //} else {
-            //    commands.push(
-            //        'dotnet run --project ' + path,
-            //        {}
-            //    );
-            //}
-            
             commands.push(
                 'dotnet run --project ' + path,
                 {}
             );
-
             break;
     }
 

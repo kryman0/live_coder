@@ -1,6 +1,8 @@
 define(function (require) {
     const CodeMirror = require("codemirror");
 
+    const clike_mode = require("./clike_mode");
+
     var textareaElem = document.getElementById("edit-code");
 
     var langMenuElem = document.getElementById("lang-menu");
@@ -163,7 +165,16 @@ define(function (require) {
                 pathToMode
             ], function() {
                 //console.log(CodeMirror);
-                cm.setOption("mode", mode);
+                if (mode === "clike") {
+                    cm.setOption("mode", {
+                        name: mode,
+                        keywords: clike_mode.keywords
+                    });
+                } else {
+                    cm.setOption("mode", {
+                        name: mode
+                    });
+                }
             });
         }
     }
