@@ -73,19 +73,6 @@ define(function (require) {
         });
     }
 
-    //document.body.addEventListener("click", (event) => {
-    //    if (event.target.id === "lang-menu")
-    //        enableOrRemoveDisplay("enable-display");
-    //    else
-    //        enableOrRemoveDisplay("remove-display");           
-    //});
-
-    
-    //function enableOrRemoveDisplay(className) {     
-    //    for (let i = 0; i < langMenuElem.children.length; i++) {
-    //        langMenuElem.children[i].className = className;
-    //    }
-    //}
 
     function convertToRightModeToCM(value) {
         let mode = value;
@@ -109,7 +96,7 @@ define(function (require) {
     function convertToRightFileExt(mode) {
         //console.log(mode);
 
-        switch (mode) {
+        switch (mode.name) {
             case "javascript":
                 mode = "js";
                 break;
@@ -119,6 +106,8 @@ define(function (require) {
             case "clike":
                 mode = "cs";
                 break;
+            case "php":
+                mode = "php";
         }
         
         //console.log(mode);
@@ -152,7 +141,7 @@ define(function (require) {
             
             
             require([
-                "codemirror", modePath
+                "codemirror", pathToMode
             ], function(CodeMirror) {
                 CodeMirror.fromTextArea(
                     textareaElem,

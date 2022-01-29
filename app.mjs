@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     let stdMsg = "";
     
     // Check file was written and language exists."
@@ -112,7 +112,7 @@ async function getOutput(file) {
     let binary = createCommandsForBinary(file);
     //let binaryOpts = createCommandsForBinary(file)[1];
     
-    console.log("binary:", binary);
+    //console.log("binary:", binary);
 
     try {        
         child = await exec(
